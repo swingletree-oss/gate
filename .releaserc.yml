@@ -1,0 +1,4 @@
+branch: "master"
+noCI: true
+dryRun: false
+npmPublish: false
