@@ -24,3 +24,5 @@ gh-app.pem
 # documentation files
 README.md
 docs
+
+release.sh
