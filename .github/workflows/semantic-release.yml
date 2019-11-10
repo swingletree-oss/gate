@@ -23,6 +23,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm test
+    - name: pwd
+      run: pwd && ls -al
     - name: Release Codebase
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
