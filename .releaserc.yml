@@ -2,3 +2,7 @@ branch: "master"
 noCI: true
 dryRun: false
 npmPublish: false
+plugins:
+  - ["@semantic-release/exec", {
+      "publishCmd": "./.release.sh ${nextRelease.version}"
+    }]

@@ -41,6 +41,7 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
+    "@semantic-release/exec": "^3.3.8",
     "@types/basic-auth": "^1.1.2",
     "@types/body-parser": "^1.17.1",
     "@types/chai": "^4.2.4",
