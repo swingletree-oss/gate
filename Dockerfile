@@ -19,8 +19,8 @@ FROM node:13-alpine
 
 ENV NODE_ENV "production"
 
-RUN mkdir -p /opt/swingletree
-WORKDIR /opt/swingletree
+RUN mkdir -p /opt/gate
+WORKDIR /opt/gate
 
 # add build artifacts from builder image
 COPY --from=build /usr/src/swingletree/bin .
