@@ -6,7 +6,7 @@ import { ReportWebservice } from "./reports/report";
 import GithubWebhook from "./github/webhooks";
 
 process.on("unhandledRejection", error => {
-  log.error("Unhandled Promise rejection: %s", JSON.stringify(error));
+  log.error("Unhandled Promise rejection: %j", error);
 });
 
 class Gate {
