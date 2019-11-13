@@ -132,9 +132,11 @@ export class ReportWebservice {
           if (!error && response.statusCode >= 200 && response.statusCode < 300 ) {
             resolve();
           } else {
+            log.error("encountered an error while sending data to plugin %j", error);
             reject((body as Comms.Message.ErrorMessage).errors);
           }
         } catch (err) {
+          log.error("failure while processing request %j", err);
           reject([ new ReportProcessingError(err) ]);
         }
       });
