@@ -54,6 +54,8 @@ export class ReportWebservice {
     scmSource.repo = this.findWebhookProperty(req, "repo");
     scmSource.sha = this.findWebhookProperty(req, "sha");
 
+    const buildUuid = this.findWebhookProperty(req, "uid");
+
     const branchValue = this.findWebhookProperty(req, "branch");
     if (branchValue) {
       scmSource.branch = branchValue.split(",");
@@ -61,7 +63,8 @@ export class ReportWebservice {
 
     if (scmSource.isDataComplete()) {
       return {
-        source: scmSource
+        source: scmSource,
+        buildUuid: buildUuid
       };
     }
 
