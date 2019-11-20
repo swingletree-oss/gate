@@ -3,11 +3,11 @@ gate:
   api:
     token:
   plugins:
-    - id: twistlock
-      base: http://localhost:4010
-    - id: zap
-      base: http://localhost:4040
-    - id: sonarqube
-      base: http://localhost:4000
     - id: nebula
-      base: http://localhost:4000
+      base: http://plugin-nebula:3010
+    - id: sonarqube
+      base: http://plugin-sonar:3020
+    - id: twistlock
+      base: http://plugin-twistlock:3030
+    - id: zap
+      base: http://plugin-zap:3040
