@@ -75,7 +75,12 @@ export class ReportWebservice {
     const router = Router();
 
     const apiToken = this.configurationService.get(GateConfig.Gate.TOKEN);
-    router.use(ReportWebservice.simpleAuthenticationMiddleware(apiToken));
+
+    if (apiToken) {
+      router.use(ReportWebservice.simpleAuthenticationMiddleware(apiToken));
+    } else {
+      log.warn("report endpoint is not protected by a token. Please consider setting one.");
+    }
 
     router.post("/:pluginId", this.handleReportPost.bind(this));
 
