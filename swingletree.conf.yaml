@@ -3,11 +3,15 @@ gate:
   api:
     token:
   plugins:
-    - id: nebula
+    nebula:
+      enabled: true
       base: http://plugin-nebula:3010
-    - id: sonarqube
+    sonarqube:
+      enabled: true
       base: http://plugin-sonar:3020
-    - id: twistlock
+    twistlock:
+      enabled: true
       base: http://plugin-twistlock:3030
-    - id: zap
+    zap:
+      enabled: true
       base: http://plugin-zap:3040

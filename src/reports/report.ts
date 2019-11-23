@@ -20,15 +20,21 @@ export class ReportWebservice {
     this.registeredPlugins = new Map<string, SwingletreePlugin>();
 
     const pluginConfig = this.configurationService.getObject(GateConfig.Gate.PLUGINS);
-    pluginConfig.forEach((plugin: SwingletreePlugin) => {
-      log.info("add plugin %s to register; targets %s", plugin.id, plugin.base);
+    Object.keys(pluginConfig).forEach((pluginId: string) => {
+      const config: SwingletreePlugin = pluginConfig[pluginId];
 
-      plugin.client = request.defaults({
-        json: true,
-        baseUrl: plugin.base
-      });
+      if (config.enabled) {
+        log.info("add plugin %s to register; targets %s", pluginId, config.base);
 
-      this.registeredPlugins.set(plugin.id, plugin);
+        config.client = request.defaults({
+          json: true,
+          baseUrl: config.base
+        });
+
+        this.registeredPlugins.set(pluginId, config);
+      } else {
+        log.info("plugin %s is disabled. Skipping registration", pluginId);
+      }
     });
   }
 
@@ -171,7 +177,7 @@ class PluginNotFoundError extends Comms.Error {
 }
 
 interface SwingletreePlugin {
-  id: string;
+  enabled: boolean;
   base: string;
   client: request.RequestAPI<request.Request, request.CoreOptions, request.RequiredUriUrl>;
 }
