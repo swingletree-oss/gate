@@ -5,6 +5,8 @@ import { log } from "@swingletree-oss/harness";
 import { ReportWebservice } from "./reports/report";
 import GithubWebhook from "./github/webhooks";
 
+require("source-map-support").install();
+
 process.on("unhandledRejection", error => {
   log.error("Unhandled Promise rejection: %j", error);
 });
