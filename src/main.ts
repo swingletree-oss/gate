@@ -23,6 +23,9 @@ class Gate {
 
     // strap report service
     this.webserver.addRouter("/report", container.get<ReportWebservice>(ReportWebservice).getRouter());
+
+    // register webhooks directory for backwards compatibility
+    this.webserver.addRouter("/webhook", container.get<ReportWebservice>(ReportWebservice).getRouter());
   }
 
 }
