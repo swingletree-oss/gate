@@ -5,6 +5,7 @@ import { inject, injectable } from "inversify";
 import * as request from "request";
 import { ConfigurationService, GateConfig } from "../configuration";
 import { PluginReportProcessRequest, PluginReportProcessMetadata } from "@swingletree-oss/harness/dist/comms/gate";
+import { RawBodyRequest } from "../webserver";
 
 @injectable()
 export class ReportWebservice {
@@ -72,6 +73,8 @@ export class ReportWebservice {
         source: scmSource,
         buildUuid: buildUuid
       };
+    } else {
+      log.info("received request with missing meta coordinates. rejecting. %j", scmSource);
     }
 
     return null;
@@ -93,7 +96,7 @@ export class ReportWebservice {
     return router;
   }
 
-  public async handleReportPost(req: Request, res: Response) {
+  public async handleReportPost(req: RawBodyRequest, res: Response) {
     const targetPluginId = req.params["pluginId"];
 
     if (!this.registeredPlugins.has(targetPluginId)) {
@@ -116,9 +119,11 @@ export class ReportWebservice {
         return acc;
       }, {});
 
+    headers.contentType = req.headers["content-type"];
+
     const data = new PluginReportProcessRequest<Object>({
-      headers: headers as any,
-      report: req.body
+        headers: headers as any,
+        report: req.is("application/json") ? req.body : req.rawBody
       }, meta
     );
 
@@ -138,6 +143,9 @@ export class ReportWebservice {
   }
 
   private async sendDataToPlugin(plugin: SwingletreePlugin, data: any) {
+
+    log.debug("Sending payload to %s:\n%j", plugin.base, data);
+
     return new Promise<any>((resolve, reject) => {
       plugin.client.post("/report", {
         body: data
@@ -146,7 +154,8 @@ export class ReportWebservice {
           if (!error && response.statusCode >= 200 && response.statusCode < 300 ) {
             resolve();
           } else {
-            log.error("encountered an error while sending data to plugin %j", error);
+            log.error("encountered an error while sending data to plugin. Responded with %s. Nested error %j", response.statusCode, body.errors);
+
             reject((body as Comms.Message.ErrorMessage).errors);
           }
         } catch (err) {
