@@ -5,7 +5,6 @@ import { inject, injectable } from "inversify";
 import * as request from "request";
 import { ConfigurationService, GateConfig } from "../configuration";
 import { PluginReportProcessRequest, PluginReportProcessMetadata } from "@swingletree-oss/harness/dist/comms/gate";
-import { RawBodyRequest } from "../webserver";
 
 @injectable()
 export class ReportWebservice {
@@ -96,7 +95,7 @@ export class ReportWebservice {
     return router;
   }
 
-  public async handleReportPost(req: RawBodyRequest, res: Response) {
+  public async handleReportPost(req: Request, res: Response) {
     const targetPluginId = req.params["pluginId"];
 
     if (!this.registeredPlugins.has(targetPluginId)) {
@@ -123,7 +122,7 @@ export class ReportWebservice {
 
     const data = new PluginReportProcessRequest<Object>({
         headers: headers as any,
-        report: req.is("application/json") ? req.body : req.rawBody
+        report: req.body
       }, meta
     );
 
