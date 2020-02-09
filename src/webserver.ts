@@ -5,10 +5,6 @@ import { inject, injectable } from "inversify";
 import { ConfigurationService, GateConfig } from "./configuration";
 import bodyParser = require("body-parser");
 
-export interface RawBodyRequest extends express.Request {
-  rawBody: string;
-}
-
 @injectable()
 export class WebServer {
   private app: express.Express;
@@ -33,19 +29,13 @@ export class WebServer {
     this.app.use(compression());
 
     // add rawBody property to request
-    this.app.use((req: RawBodyRequest, res: express.Response, next: express.NextFunction) => {
-      req.rawBody = "";
-      req.on("data", function(chunk) {
-        req.rawBody += chunk;
-      });
-
-      req.on("end", function() {
-        next();
-      });
-    });
-
-    this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(bodyParser.text({
+      type: "application/xml"
+    }));
+    this.app.use(bodyParser.json({
+      type: "application/json"
+    }));
 
     // set common headers
     this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
