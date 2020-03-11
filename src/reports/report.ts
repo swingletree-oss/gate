@@ -153,9 +153,12 @@ export class ReportWebservice {
           if (!error && response.statusCode >= 200 && response.statusCode < 300 ) {
             resolve();
           } else {
-            log.error("encountered an error while sending data to plugin. Responded with %s. Nested error %j", response.statusCode, body.errors);
-
-            reject((body as Comms.Message.ErrorMessage).errors);
+            log.error("encountered an error while sending data to plugin. Cause: %j", error);
+            if (error) {
+              reject([ new ReportProcessingError(error) ]);
+            } else {
+              reject((body as Comms.Message.ErrorMessage).errors);
+            }
           }
         } catch (err) {
           log.error("failure while processing request %j", err);
