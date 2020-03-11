@@ -8,7 +8,7 @@ gate:
       base: http://plugin-nebula:3010
     sonarqube:
       enabled: true
-      base: http://plugin-sonar:3020
+      base: http://plugin-sonarqube:3020
     twistlock:
       enabled: true
       base: http://plugin-twistlock:3030
