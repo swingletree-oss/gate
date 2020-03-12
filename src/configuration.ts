@@ -58,12 +58,7 @@ export class ConfigurationService {
 
 export namespace GateConfig {
   export enum Github {
-    APPID = "github:app:id",
-    KEYFILE = "github:app:keyfile",
-    BASE = "github:base",
-    WEBHOOK_SECRET = "github:secret",
-    APP_PUBLIC_PAGE = "github:app:page",
-    CLIENT_DEBUG = "github:debug"
+    WEBHOOK_SECRET = "gate:github:secret"
   }
 
   export enum Gate {
