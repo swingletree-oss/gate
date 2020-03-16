@@ -6,12 +6,16 @@ gate:
     nebula:
       enabled: true
       base: http://plugin-nebula:3010
+      insecure: false # disable authentication for this plugin endpoint
     sonarqube:
       enabled: true
       base: http://plugin-sonarqube:3020
+      insecure: false # disable authentication for this plugin endpoint
     twistlock:
       enabled: true
       base: http://plugin-twistlock:3030
+      insecure: false # disable authentication for this plugin endpoint
     zap:
       enabled: true
       base: http://plugin-zap:3040
+      insecure: false # disable authentication for this plugin endpoint

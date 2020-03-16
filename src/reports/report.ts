@@ -19,9 +19,9 @@ export class ReportWebservice {
 
     this.registeredPlugins = new Map<string, SwingletreePlugin>();
 
-    const pluginConfig = this.configurationService.getObject(GateConfig.Gate.PLUGINS);
+    const pluginConfig: any = this.configurationService.getObject<any>(GateConfig.Gate.PLUGINS);
     Object.keys(pluginConfig).forEach((pluginId: string) => {
-      const config: SwingletreePlugin = pluginConfig[pluginId];
+      const config: SwingletreePlugin = new SwingletreePlugin(pluginConfig[pluginId]);
 
       if (config.enabled) {
         log.info("add plugin %s to register; targets %s", pluginId, config.base);
@@ -31,20 +31,38 @@ export class ReportWebservice {
           baseUrl: config.base
         });
 
+        if (config.insecure) {
+          log.warn("plugin endpoint for %s is configured to be not protected.", pluginId);
+        }
+
         this.registeredPlugins.set(pluginId, config);
       } else {
         log.info("plugin %s is disabled. Skipping registration", pluginId);
       }
     });
+
   }
 
-  public static simpleAuthenticationMiddleware(secret: string) {
+  public simpleAuthenticationMiddleware(secret: string, plugins: Map<string, SwingletreePlugin>) {
     return (req: Request, res: Response, next: NextFunction) => {
+      const pluginId = req.params["pluginId"];
+      const pluginConfig = plugins.get(pluginId);
       const auth = BasicAuth(req);
-      if (auth && secret === auth.pass) {
-        next();
+
+      if (pluginConfig?.enabled) {
+        if (pluginConfig.insecure) {
+          log.debug("allowing unprotected access to plugin endpoint %s", pluginId);
+          next();
+        } else {
+          if (auth && secret === auth.pass) {
+            next();
+          } else {
+            log.debug("rejecting access to plugin endpoint %s", pluginId);
+            res.status(401).send("Unauthorized");
+          }
+        }
       } else {
-        res.sendStatus(401);
+        res.status(404).send("requested plugin not available or enabled");
       }
     };
   }
@@ -73,7 +91,7 @@ export class ReportWebservice {
         buildUuid: buildUuid
       };
     } else {
-      log.info("received request with missing meta coordinates. rejecting. %j", scmSource);
+      log.info("received request with missing meta coordinates %j", scmSource);
     }
 
     return null;
@@ -85,12 +103,11 @@ export class ReportWebservice {
     const apiToken = this.configurationService.get(GateConfig.Gate.TOKEN);
 
     if (apiToken) {
-      router.use(ReportWebservice.simpleAuthenticationMiddleware(apiToken));
+      router.post("/:pluginId", this.simpleAuthenticationMiddleware(apiToken, this.registeredPlugins), this.handleReportPost.bind(this));
     } else {
       log.warn("report endpoint is not protected by a token. Please consider setting one.");
+      router.post("/:pluginId", this.handleReportPost.bind(this));
     }
-
-    router.post("/:pluginId", this.handleReportPost.bind(this));
 
     return router;
   }
@@ -187,8 +204,15 @@ class PluginNotFoundError extends Comms.Error {
   }
 }
 
-interface SwingletreePlugin {
+export class SwingletreePlugin {
   enabled: boolean;
   base: string;
+  insecure: boolean;
   client: request.RequestAPI<request.Request, request.CoreOptions, request.RequiredUriUrl>;
+
+  constructor(config: any) {
+    this.enabled = config.enabled?.toString().toLowerCase() == "true";
+    this.base = config.base;
+    this.insecure = config.insecure?.toString().toLowerCase() == "true";
+  }
 }
