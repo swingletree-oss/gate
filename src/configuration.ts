@@ -4,7 +4,7 @@ import { log, Configuration } from "@swingletree-oss/harness";
 @injectable()
 export class ConfigurationService extends Configuration {
   constructor() {
-    super("./swingletree.conf.yaml", /((GATE|LOG)_.*)$/i);
+    super("./swingletree.conf.yaml", /((GATE|LOG|URLS)_.*)$/i);
   }
 }
 
