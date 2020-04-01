@@ -15,9 +15,11 @@ class ScottyClient {
   constructor(
     @inject(ConfigurationService) configService: ConfigurationService
   ) {
+    const scottyBaseUrl = configService.get(GateConfig.Urls.SCOTTY);
+    log.debug("initialize scotty installation webhook client for url %s", scottyBaseUrl);
     this.scottyClient = request.defaults({
       json: true,
-      baseUrl: configService.get(GateConfig.Urls.SCOTTY)
+      baseUrl: scottyBaseUrl
     });
   }
 
@@ -31,7 +33,11 @@ class ScottyClient {
             if (!error && response.statusCode >= 200 && response.statusCode < 300 ) {
               resolve();
             } else {
-              reject((body as Comms.Message.ErrorMessage).errors);
+              if (error) {
+                reject(error);
+              } else {
+                reject((body as Comms.Message.ErrorMessage).errors);
+              }
             }
           } catch (err) {
             reject([ new Comms.Error("General Error", err) ]);
@@ -51,7 +57,12 @@ class ScottyClient {
             if (!error && response.statusCode >= 200 && response.statusCode < 300 ) {
               resolve();
             } else {
-              reject((body as Comms.Message.ErrorMessage).errors);
+              log.error("encountered an error while sending data to plugin. Cause: %j", error);
+              if (error) {
+                reject([ new Comms.Message.ErrorMessage(error) ]);
+              } else {
+                reject((body as Comms.Message.ErrorMessage).errors);
+              }
             }
           } catch (err) {
             reject([ new Comms.Error("General Error", err) ]);

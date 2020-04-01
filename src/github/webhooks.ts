@@ -54,12 +54,16 @@ class GithubWebhook {
           account: data.installation.account.login,
           accountId: data.installation.account.id,
           installationId: data.installation.id
+        }).catch(err => {
+          log.error("failed to emit installation add event to scotty: %j", err);
         });
       } else if (data.action == "deleted") {
         this.scottyClient.removeInstallation({
           account: data.installation.account.login,
           accountId: data.installation.account.id,
           installationId: data.installation.id
+        }).catch(err => {
+          log.error("failed to emit installation removal event to scotty: %j", err);
         });
       }
     } catch (err) {
