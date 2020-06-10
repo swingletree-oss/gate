@@ -70,10 +70,10 @@ describe("Report Webhooks", () => {
 
   it("should extract webhook info when given as headers", () => {
     requestMock.headers = {
-      "X-swingletree-org": "org",
-      "X-swingletree-repo": "repo",
-      "X-swingletree-sha": "sha",
-      "X-swingletree-branch": "branch"
+      "swingletree-org": "org",
+      "swingletree-repo": "repo",
+      "swingletree-sha": "sha",
+      "swingletree-branch": "branch"
     };
     requestMock.query = {};
 
