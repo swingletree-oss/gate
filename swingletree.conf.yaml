@@ -19,3 +19,11 @@ gate:
       enabled: true
       base: http://plugin-zap:3040
       insecure: false # disable authentication for this plugin endpoint
+    testng:
+      enabled: true
+      base: http://plugin-testng:3050
+      insecure: false # disable authentication for this plugin endpoint
+    junit:
+      enabled: true
+      base: http://plugin-junit:3060
+      insecure: false # disable authentication for this plugin endpoint

@@ -68,7 +68,7 @@ export class ReportWebservice {
   }
 
   private findWebhookProperty(req: Request, property: string): string {
-    return req.query[property] || req.headers[`swingletree-${property}`] || req.headers[`X-swingletree-${property}`];
+    return String(req.query[property] || req.headers[`swingletree-${property}`] || req.headers[`X-swingletree-${property}`]);
   }
 
   public extractWebhookInfo(req: Request): PluginReportProcessMetadata {
@@ -85,7 +85,7 @@ export class ReportWebservice {
       scmSource.branch = branchValue.split(",");
     }
 
-    if (scmSource.isDataComplete()) {
+    if (Harness.GithubSource.isDataComplete(scmSource)) {
       return {
         source: scmSource,
         buildUuid: buildUuid
