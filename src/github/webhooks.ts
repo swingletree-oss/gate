@@ -1,5 +1,5 @@
 "use strict";
-import Webhooks from "@octokit/webhooks";
+import { EventPayloads } from "@octokit/webhooks";
 import { log } from "@swingletree-oss/harness";
 import { Router } from "express";
 import { inject, injectable } from "inversify";
@@ -45,7 +45,7 @@ class GithubWebhook {
     return router;
   }
 
-  public installationHandler(repo: string, data: Webhooks.WebhookPayloadInstallation) {
+  public installationHandler(repo: string, data: EventPayloads.WebhookPayloadInstallation) {
     log.debug("received GitHub webhook installation event");
 
     try {
