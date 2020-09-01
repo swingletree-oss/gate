@@ -24,17 +24,25 @@ export class WebServer {
   private initialize() {
     log.info("initializing server...");
 
+    const maxBodySize = process.env["MAX_BODY_SIZE"] || "1mb";
+    log.info("setting max body-size to %s", maxBodySize);
+
     // express configuration
     this.app.set("port", this.port);
     this.app.use(compression());
 
     // add rawBody property to request
-    this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(bodyParser.urlencoded({
+      limit: maxBodySize,
+      extended: true
+    }));
     this.app.use(bodyParser.text({
-      type: "application/xml"
+      type: "application/xml",
+      limit: maxBodySize
     }));
     this.app.use(bodyParser.json({
-      type: "application/json"
+      type: "application/json",
+      limit: maxBodySize
     }));
 
     // set common headers
